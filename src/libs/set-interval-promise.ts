@@ -1,25 +1,24 @@
 export default function setIntervalPromise(
-  callback: CallableFunction,
-  time: number,
+  timeInterval: number,
+  timeDuration: number,
   textIn: string,
   textInterval: string,
-  textOut?: string,
+  textOut = '',
 ) {
   let currentTime = 0
   return new Promise<void>((resolve, reject) => {
     try {
       process.stdout.write(`${textIn}`)
       const intervalTimer = setInterval(() => {
-        callback()
-        currentTime += time
-        if (currentTime <= 3000) {
+        currentTime += timeInterval
+        if (currentTime <= timeDuration) {
           process.stdout.write(`${textInterval}`)
         } else {
           clearInterval(intervalTimer)
           console.log(`\n${textOut}\n`)
           resolve()
         }
-      }, time)
+      }, timeInterval)
     } catch (error) {
       reject(error)
     }

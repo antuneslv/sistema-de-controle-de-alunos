@@ -79,7 +79,13 @@ app.post('/alunos', (request, response) => {
     students = JSON.parse(chunk.toString())
   })
 
-  const { aluno, nota1, nota2, media, aprovado } = request.body
+  const { aluno, nota1, nota2 } = request.body
+
+  const avarageGrade = ((Number(nota1) + Number(nota2)) / 2).toFixed(1)
+  const media = Number(avarageGrade)
+  let aprovado: boolean
+
+  media >= 5 ? (aprovado = true) : (aprovado = false)
 
   const student = { id: uuidv4(), aluno, nota1, nota2, media, aprovado }
 

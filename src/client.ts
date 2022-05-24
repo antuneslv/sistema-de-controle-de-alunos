@@ -1,6 +1,8 @@
 /* eslint-disable no-constant-condition */
 import * as readline from 'readline-sync'
+import setIntervalPromise from './libs/set-interval-promise'
 import {
+  testConnection,
   post,
   get,
   queryParamsAproved,
@@ -8,44 +10,57 @@ import {
 } from './services/api'
 
 console.log('-='.repeat(30))
-console.log('Sistema de Controle de Alunos'.padStart(45, ' '))
+console.log('Sistema de Controle de Alunos - SCA'.padStart(51, ' '))
 console.log('-='.repeat(30), '\n')
 
 interface Student {
   aluno: string
   nota1: number | null
   nota2: number | null
-  media: number
-  aprovado: boolean
 }
 
 let student: Student = {
   aluno: '',
   nota1: null,
   nota2: null,
-  media: 0,
-  aprovado: false,
 }
 
 const options = [
-  'Cadastrar aluno',
-  'Consultar alunos',
-  'Consultar aprovados/reprovados',
-  'Atualizar um aluno',
-  'Apagar um aluno do registro',
+  'Cadastrar aluno.',
+  'Consultar alunos.',
+  'Consultar aprovados/reprovados.',
+  'Atualizar um aluno.',
+  'Apagar um aluno do registro.',
 ]
 
 const optionsTwo = ['Aprovados', 'Reprovados']
 
 async function client() {
+  const status = await testConnection()
+  if (status === 404) {
+    return
+  } else {
+    console.log(
+      'Bem vindo ao Sistem de Constrole de Alunos!\nFaça a sua escolha:',
+    )
+  }
   while (true) {
-    const index = readline.keyInSelect(options, 'Escolha uma opcao: ', {
+    const index = readline.keyInSelect(options, 'Opcao: ', {
       cancel: 'Finalizar programa.',
       guide: false,
     })
 
     if (options[index] === undefined) {
-      console.log('Fim do programa!')
+      console.log('\nObrigado por usar o SCA!')
+      console.log('Desenvolvido por Leandro Antunes')
+      console.log('https://github.com/antuneslv')
+      await setIntervalPromise(
+        500,
+        1500,
+        '\nFechando o programa',
+        '.',
+        'Fim do programa!',
+      )
       break
     } else if (options[index] === 'Cadastrar aluno') {
       const name = readline.question('Nome do aluno: ')
@@ -71,25 +86,12 @@ async function client() {
         }
       } while (student.nota2 < 0 || student.nota2 > 10 || isNaN(student.nota2))
 
-      const avarageGrade = (
-        (Number(student.nota1) + Number(student.nota2)) /
-        2
-      ).toFixed(1)
-
-      student.media = Number(avarageGrade)
-
-      student.media >= 5
-        ? (student.aprovado = true)
-        : (student.aprovado = false)
-
       await post(student)
 
       student = {
         aluno: '',
         nota1: null,
         nota2: null,
-        media: 0,
-        aprovado: false,
       }
     } else if (options[index] === 'Consultar alunos') {
       await get()
