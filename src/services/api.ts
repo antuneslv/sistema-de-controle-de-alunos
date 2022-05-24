@@ -14,16 +14,56 @@ interface Student {
   aprovado: boolean
 }
 
-export async function callApiPost(student: Student) {
+export async function post(student: Student) {
   try {
     await api.post('alunos', student)
     await setIntervalPromise(
       () => {},
       1000,
       'Cadastrando',
-      '. ',
+      '.',
       `Aluno ${student.aluno} cadastrado com sucesso!`,
     )
+  } catch (error) {
+    console.log(
+      '\nRequisição negada.\nFalha na conexão com o servidor.\nTente novamente mais tarde.\n',
+    )
+  }
+}
+
+export async function get() {
+  try {
+    const students = await api.get('alunos')
+    await setIntervalPromise(() => {}, 1000, 'Buscando alunos', '.')
+    console.log(students.data)
+  } catch (error) {
+    console.log(
+      '\nRequisição negada.\nFalha na conexão com o servidor.\nTente novamente mais tarde.\n',
+    )
+  }
+}
+
+export async function queryParamsAproved() {
+  try {
+    const students = await api.get('alunos', {
+      params: { aprovados: true },
+    })
+    await setIntervalPromise(() => {}, 1000, 'Buscando alunos aprovados', '.')
+    console.log(students.data)
+  } catch (error) {
+    console.log(
+      '\nRequisição negada.\nFalha na conexão com o servidor.\nTente novamente mais tarde.\n',
+    )
+  }
+}
+
+export async function queryParamsReproved() {
+  try {
+    const students = await api.get('alunos', {
+      params: { reprovados: false },
+    })
+    await setIntervalPromise(() => {}, 1000, 'Buscando alunos reprovados', '.')
+    console.log(students.data)
   } catch (error) {
     console.log(
       '\nRequisição negada.\nFalha na conexão com o servidor.\nTente novamente mais tarde.\n',

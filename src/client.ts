@@ -1,5 +1,11 @@
+/* eslint-disable no-constant-condition */
 import * as readline from 'readline-sync'
-import { callApiPost } from './services/api'
+import {
+  post,
+  get,
+  queryParamsAproved,
+  queryParamsReproved,
+} from './services/api'
 
 console.log('-='.repeat(30))
 console.log('Sistema de Controle de Alunos'.padStart(45, ' '))
@@ -29,8 +35,9 @@ const options = [
   'Apagar um aluno do registro',
 ]
 
+const optionsTwo = ['Aprovados', 'Reprovados']
+
 async function client() {
-  // eslint-disable-next-line no-constant-condition
   while (true) {
     const index = readline.keyInSelect(options, 'Escolha uma opcao: ', {
       cancel: 'Finalizar programa.',
@@ -75,7 +82,7 @@ async function client() {
         ? (student.aprovado = true)
         : (student.aprovado = false)
 
-      await callApiPost(student)
+      await post(student)
 
       student = {
         aluno: '',
@@ -83,6 +90,23 @@ async function client() {
         nota2: null,
         media: 0,
         aprovado: false,
+      }
+    } else if (options[index] === 'Consultar alunos') {
+      await get()
+    } else if (options[index] === 'Consultar aprovados/reprovados') {
+      while (true) {
+        const index = readline.keyInSelect(optionsTwo, 'Escolha uma opcao: ', {
+          cancel: 'Voltar.',
+          guide: false,
+        })
+
+        if (optionsTwo[index] === undefined) {
+          break
+        } else if (optionsTwo[index] === 'Aprovados') {
+          await queryParamsAproved()
+        } else if (optionsTwo[index] === 'Reprovados') {
+          await queryParamsReproved()
+        }
       }
     }
   }

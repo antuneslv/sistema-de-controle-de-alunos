@@ -3,7 +3,7 @@ export default function setIntervalPromise(
   time: number,
   textIn: string,
   textInterval: string,
-  textOut: string,
+  textOut?: string,
 ) {
   let currentTime = 0
   return new Promise<void>((resolve, reject) => {
