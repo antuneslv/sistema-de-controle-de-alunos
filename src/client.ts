@@ -156,31 +156,35 @@ async function client() {
       if (students === 404) {
         continue
       } else {
-        students.forEach((student: fullStudentData) => {
-          const firstGrade = `${student.firstGrade}`
-          const secondGrade = `${student.secondGrade}`
-          const average = `${student.average}`
-          let status
-          student.isApproved === true
-            ? (status = colors.green('Aprovado'))
-            : (status = colors.red('Reprovado'))
+        if (students.length === 0) {
+          console.log(colors.yellow('Nenhum aluno foi registrado ainda.'))
+        } else {
+          students.forEach((student: fullStudentData) => {
+            const firstGrade = `${student.firstGrade}`
+            const secondGrade = `${student.secondGrade}`
+            const average = `${student.average}`
+            let status
+            student.isApproved === true
+              ? (status = colors.green('Aprovado'))
+              : (status = colors.red('Reprovado'))
 
-          console.log(
-            `${colors.bold('Id do aluno:')} ${colors.cyan(student.id)}`,
-          )
-          console.log(
-            `${colors.bold('Aluno(a):')} ${colors.cyan(student.name)}`,
-          )
-          console.log(
-            `${colors.bold('Primeira Nota:')} ${colors.cyan(
-              firstGrade,
-            )} | ${colors.bold('Segunda Nota:')} ${colors.cyan(
-              secondGrade,
-            )} | ${colors.bold('Média:')} ${colors.cyan(average)}`,
-          )
-          console.log(`${colors.bold('Situação:')} ${status}\n`)
-          console.log('-'.repeat(60) + '\n')
-        })
+            console.log(
+              `${colors.bold('Id do aluno:')} ${colors.cyan(student.id)}`,
+            )
+            console.log(
+              `${colors.bold('Aluno(a):')} ${colors.cyan(student.name)}`,
+            )
+            console.log(
+              `${colors.bold('Primeira Nota:')} ${colors.cyan(
+                firstGrade,
+              )} | ${colors.bold('Segunda Nota:')} ${colors.cyan(
+                secondGrade,
+              )} | ${colors.bold('Média:')} ${colors.cyan(average)}`,
+            )
+            console.log(`${colors.bold('Situação:')} ${status}\n`)
+            console.log('-'.repeat(60) + '\n')
+          })
+        }
       }
     } else if (mainMenu[index] === 'Consultar aprovados/reprovados') {
       while (true) {
