@@ -22,8 +22,8 @@ export async function testConnection() {
   } catch (error) {
     console.log('Falha na conexão com o servidor.')
     await setIntervalPromise(
-      500,
-      1500,
+      750,
+      2250,
       'Fechando o programa',
       '.',
       'Fim do programa!',
@@ -33,7 +33,7 @@ export async function testConnection() {
   }
 }
 
-export async function post(student: Student) {
+export async function postApi(student: Student) {
   try {
     await api.post('alunos', student)
     await setIntervalPromise(
@@ -51,35 +51,35 @@ export async function post(student: Student) {
   }
 }
 
-export async function get() {
+export async function getApi() {
   try {
     const students = await api.get('alunos')
-    await setIntervalPromise(1000, 3000, 'Buscando alunos', '.')
+    await setIntervalPromise(1000, 3000, '\nBuscando alunos', '.')
     console.log(students.data)
   } catch (error) {
-    await setIntervalPromise(1000, 3000, 'Buscando alunos', '.')
+    await setIntervalPromise(1000, 3000, '\nBuscando alunos', '.')
     console.log(
       '\nRequisição negada.\nFalha na conexão com o servidor.\nTente novamente mais tarde.\n',
     )
   }
 }
 
-export async function queryParamsAproved() {
+export async function queryParamsAprovedApi() {
   try {
     const students = await api.get('alunos', {
       params: { aprovados: true },
     })
-    await setIntervalPromise(1000, 3000, 'Buscando alunos aprovados', '.')
+    await setIntervalPromise(1000, 3000, '\nBuscando alunos aprovados', '.')
     console.log(students.data)
   } catch (error) {
-    await setIntervalPromise(1000, 3000, 'Buscando alunos aprovados', '.')
+    await setIntervalPromise(1000, 3000, '\nBuscando alunos aprovados', '.')
     console.log(
       '\nRequisição negada.\nFalha na conexão com o servidor.\nTente novamente mais tarde.\n',
     )
   }
 }
 
-export async function queryParamsReproved() {
+export async function queryParamsReprovedApi() {
   try {
     const students = await api.get('alunos', {
       params: { reprovados: false },
@@ -88,6 +88,51 @@ export async function queryParamsReproved() {
     console.log(students.data)
   } catch (error) {
     await setIntervalPromise(1000, 3000, 'Buscando alunos reprovados', '.')
+    console.log(
+      '\nRequisição negada.\nFalha na conexão com o servidor.\nTente novamente mais tarde.\n',
+    )
+  }
+}
+
+export async function simpleGetApi() {
+  try {
+    const students = await api.get('alunos')
+    return students.data
+  } catch (error) {
+    console.log('Falha na requisição')
+  }
+}
+
+export async function putApi(id: string, student: Student) {
+  try {
+    await api.put(`alunos/${id}`, student)
+    await setIntervalPromise(
+      1000,
+      3000,
+      '\nAtualizando',
+      '.',
+      'Dados atualizados com sucesso!',
+    )
+  } catch (error) {
+    await setIntervalPromise(1000, 3000, 'Atualizando', '.')
+    console.log(
+      '\nRequisição negada.\nFalha na conexão com o servidor.\nTente novamente mais tarde.\n',
+    )
+  }
+}
+
+export async function deleteApi(id: string) {
+  try {
+    await api.delete(`alunos/${id}`)
+    await setIntervalPromise(
+      1000,
+      3000,
+      '\nApagando do registro',
+      '.',
+      'Aluno apagado com sucesso!',
+    )
+  } catch (error) {
+    await setIntervalPromise(1000, 3000, 'Apagando do registro', '.')
     console.log(
       '\nRequisição negada.\nFalha na conexão com o servidor.\nTente novamente mais tarde.\n',
     )
