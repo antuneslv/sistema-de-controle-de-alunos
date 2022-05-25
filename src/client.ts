@@ -1,4 +1,3 @@
-/* eslint-disable no-constant-condition */
 import * as readline from 'readline-sync'
 import setIntervalPromise from './libs/set-interval-promise'
 import {
@@ -11,10 +10,17 @@ import {
   putApi,
   deleteApi,
 } from './services/api'
+import colors from 'colors'
 
-console.log('-='.repeat(30))
-console.log('Sistema de Controle de Alunos - SCA'.padStart(51, ' '))
-console.log('-='.repeat(30), '\n')
+console.log(colors.bgBlue.black('\n=' + '-='.repeat(30)))
+console.log(
+  colors.bgBlue.black(
+    '|' +
+      colors.bold('Sistema de Controle de Alunos - SCA'.padStart(47, ' ')) +
+      '|'.padStart(13, ' '),
+  ),
+)
+console.log(colors.bgBlue.black('=' + '-='.repeat(30) + '\n'))
 
 interface Student {
   aluno: string
@@ -29,10 +35,33 @@ interface StudentWithId {
   nota2: number
 }
 
+interface fullStudentData {
+  id: string
+  aluno: string
+  nota1: number
+  nota2: number
+  media: number
+  aprovado: boolean
+}
+
 let student: Student = {
   aluno: '',
   nota1: null,
   nota2: null,
+}
+
+function validateInputName() {
+  const regexName = /^[A-Za-z ãáâéêèëíõóôúüçñø-]+$/
+  do {
+    if (student.aluno === '') {
+      const name = readline.question('\nNome do aluno: ')
+      student.aluno = name
+    } else {
+      console.log('Entre com um nome válido.')
+      const name = readline.question('\nNome do aluno: ')
+      student.aluno = name
+    }
+  } while (!regexName.test(student.aluno))
 }
 
 function validateInputFirstGrade() {
@@ -79,30 +108,31 @@ async function client() {
     return
   } else {
     console.log(
-      'Bem vindo ao Sistem de Constrole de Alunos!\nFaça a sua escolha:',
+      `Bem vindo ao ${colors.bold(
+        'Sistem de Constrole de Alunos!',
+      )}\nFaça a sua escolha:`,
     )
   }
   while (true) {
-    const index = readline.keyInSelect(mainMenu, 'Opcao: ', {
+    const index = readline.keyInSelect(mainMenu, colors.bold('Opcao: '), {
       cancel: 'Finalizar programa',
       guide: false,
     })
 
     if (mainMenu[index] === undefined) {
       console.log('\nObrigado por usar o SCA!')
-      console.log('Desenvolvido por Leandro Antunes')
-      console.log('https://github.com/antuneslv')
+      console.log(`Desenvolvido por ${colors.blue.bold('Leandro V. Antunes')}`)
+      console.log(colors.blue.italic('https://github.com/antuneslv'))
       await setIntervalPromise(
-        500,
-        1500,
-        '\nFechando o programa',
-        '.',
+        750,
+        2250,
+        colors.italic('\nFechando o programa'),
+        colors.italic('.'),
         'Fim do programa!',
       )
       break
     } else if (mainMenu[index] === 'Cadastrar aluno') {
-      const name = readline.question('\nNome do aluno: ')
-      student.aluno = name
+      validateInputName()
       validateInputFirstGrade()
       validateInputSecondGrade()
 
@@ -114,20 +144,77 @@ async function client() {
         nota2: null,
       }
     } else if (mainMenu[index] === 'Consultar alunos') {
-      await getApi()
+      const students = await getApi()
+      if (students === 404) {
+        continue
+      } else {
+        students.forEach((student: fullStudentData) => {
+          const firstGrade = `${student.nota1}`
+          const secondGrade = `${student.nota2}`
+          const avarage = `${student.media}`
+          let status
+          student.aprovado === true
+            ? (status = colors.green('Aprovado'))
+            : (status = colors.red('Reprovado'))
+
+          console.log(
+            `${colors.bold('Id do aluno:')} ${colors.cyan(student.id)}`,
+          )
+          console.log(
+            `${colors.bold('Aluno(a):')} ${colors.cyan(student.aluno)}`,
+          )
+          console.log(
+            `${colors.bold('Primeira Nota:')} ${colors.cyan(
+              firstGrade,
+            )} | ${colors.bold('Segunda Nota:')} ${colors.cyan(
+              secondGrade,
+            )} | ${colors.bold('Média:')} ${colors.cyan(avarage)}`,
+          )
+          console.log(`${colors.bold('Situação:')} ${status}\n`)
+          console.log('-'.repeat(60) + '\n')
+        })
+      }
     } else if (mainMenu[index] === 'Consultar aprovados/reprovados') {
       while (true) {
-        const index = readline.keyInSelect(statusMenu, 'Escolha uma opcao: ', {
-          cancel: 'Voltar.',
+        const index = readline.keyInSelect(statusMenu, colors.bold('Opcao: '), {
+          cancel: 'Voltar',
           guide: false,
         })
 
         if (statusMenu[index] === undefined) {
           break
         } else if (statusMenu[index] === 'Aprovados') {
-          await queryParamsAprovedApi()
+          const students = await queryParamsAprovedApi()
+          if (students === 404) {
+            break
+          } else {
+            students.forEach((student: fullStudentData) => {
+              const avarage = `${student.media}`
+
+              console.log(
+                `${colors.bold('Aluno(a):')} ${colors.cyan(
+                  student.aluno,
+                )} | ${colors.bold('Média:')} ${colors.cyan(avarage)}\n`,
+              )
+              console.log('-'.repeat(60) + '\n')
+            })
+          }
         } else if (statusMenu[index] === 'Reprovados') {
-          await queryParamsReprovedApi()
+          const students = await queryParamsReprovedApi()
+          if (students === 404) {
+            break
+          } else {
+            students.forEach((student: fullStudentData) => {
+              const avarage = `${student.media}`
+
+              console.log(
+                `${colors.bold('Aluno(a):')} ${colors.cyan(
+                  student.aluno,
+                )} | ${colors.bold('Média:')} ${colors.cyan(avarage)}\n`,
+              )
+              console.log('-'.repeat(60) + '\n')
+            })
+          }
         }
       }
     } else if (mainMenu[index] === 'Atualizar um aluno') {
@@ -137,17 +224,20 @@ async function client() {
 
       while (true) {
         const allStudents = await simpleGetApi()
+        if (allStudents === 404) {
+          break
+        }
         const studentIndex = allStudents.findIndex(
           (student: StudentWithId) => student.id === idStudent,
         )
 
         if (studentIndex < 0) {
-          console.log('\nAluno não encontrado')
+          console.log(colors.yellow('Aluno não encontrado.'))
           break
         }
 
         const selectedStudent = allStudents[studentIndex]
-        const index = readline.keyInSelect(updateMenu, 'Escolha uma opcao: ', {
+        const index = readline.keyInSelect(updateMenu, colors.bold('Opcao: '), {
           cancel: 'Voltar',
           guide: false,
         })
@@ -155,10 +245,9 @@ async function client() {
         if (updateMenu[index] === undefined) {
           break
         } else if (updateMenu[index] === 'Nome') {
-          const name = readline.question('Atualizar nome: ')
           student.nota1 = selectedStudent.nota1
           student.nota2 = selectedStudent.nota2
-          student.aluno = name
+          validateInputName()
 
           await putApi(idStudent, student)
 
@@ -195,17 +284,41 @@ async function client() {
       }
     } else {
       const idStudent = readline.question(
-        '\nEntre com o id do aluno que voce deseja atualizar. [Opcao "Consultar alunos" para obter o id]:\n',
+        '\nEntre com o id do aluno que voce deseja apagar do registro. [Opcao "Consultar alunos" para obter o id]:\n',
       )
       const allStudents = await simpleGetApi()
-      const studentIndex = allStudents.findIndex(
-        (student: StudentWithId) => student.id === idStudent,
-      )
-
-      if (studentIndex < 0) {
-        console.log('\nAluno não encontrado.')
+      if (allStudents === 404) {
+        continue
       } else {
-        await deleteApi(idStudent)
+        const studentIndex = allStudents.findIndex(
+          (student: StudentWithId) => student.id === idStudent,
+        )
+
+        if (studentIndex < 0) {
+          console.log(colors.yellow('Aluno não encontrado.'))
+        } else {
+          const selectedStudent = allStudents[studentIndex]
+          console.log(
+            colors.yellow(
+              '\nAtenção, esse procedimento excluirá pemanentemente os dados do registro.',
+            ),
+          )
+          console.log(
+            `Você tem certeza que deseja excluir o aluno(a) ${colors.blue.bold(
+              selectedStudent.aluno,
+            )}?`,
+          )
+          const deletStudent = readline
+            .question(
+              `Digite ${colors.red.bold('Sim')} para validar sua escolha: `,
+            )
+            .toUpperCase()
+          if (deletStudent === 'Sim'.toUpperCase()) {
+            await deleteApi(idStudent)
+          } else {
+            continue
+          }
+        }
       }
     }
   }

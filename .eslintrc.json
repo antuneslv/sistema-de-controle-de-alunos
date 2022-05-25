@@ -19,6 +19,7 @@
     "linebreak-style": ["error", "unix"],
     "quotes": ["error", "single"],
     "semi": ["error", "never"],
+    "no-constant-condition":"off",
     "prettier/prettier": "error"
   }
 }

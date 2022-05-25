@@ -1,6 +1,6 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
 import axios from 'axios'
 import setIntervalPromise from '../libs/set-interval-promise'
+import colors from 'colors'
 
 const api = axios.create({
   baseURL: 'http://localhost:3333/',
@@ -14,18 +14,23 @@ interface Student {
 
 export async function testConnection() {
   let connection: number
-  await setIntervalPromise(1000, 6000, 'Estabelecendo conexão', '.')
+  await setIntervalPromise(
+    1000,
+    6000,
+    colors.italic('Estabelecendo conexão'),
+    colors.italic('.'),
+  )
   try {
     const tryConnection = await api.get('alunos')
     connection = tryConnection.status
     return connection
   } catch (error) {
-    console.log('Falha na conexão com o servidor.')
+    console.log(colors.red('Falha na conexão com o servidor.'))
     await setIntervalPromise(
       750,
       2250,
-      'Fechando o programa',
-      '.',
+      colors.italic('Fechando o programa'),
+      colors.italic('.'),
       'Fim do programa!',
     )
     connection = 404
@@ -39,28 +44,44 @@ export async function postApi(student: Student) {
     await setIntervalPromise(
       1000,
       3000,
-      'Cadastrando',
+      colors.italic('\nCadastrando'),
       '.',
-      `Aluno ${student.aluno} cadastrado com sucesso!`,
+      colors.green(
+        `Aluno(a) ${colors.white(student.aluno)} cadastrado(a) com sucesso!`,
+      ),
     )
   } catch (error) {
-    await setIntervalPromise(1000, 3000, 'Cadastrando', '.')
+    await setIntervalPromise(1000, 3000, colors.italic('\nCadastrando'), '.')
     console.log(
-      '\nRequisição negada.\nFalha na conexão com o servidor.\nTente novamente mais tarde.\n',
+      colors.red('Requisição negada.\nFalha na conexão com o servidor.'),
     )
+    console.log('Tente novamente mais tarde.')
   }
 }
 
 export async function getApi() {
   try {
     const students = await api.get('alunos')
-    await setIntervalPromise(1000, 3000, '\nBuscando alunos', '.')
-    console.log(students.data)
-  } catch (error) {
-    await setIntervalPromise(1000, 3000, '\nBuscando alunos', '.')
-    console.log(
-      '\nRequisição negada.\nFalha na conexão com o servidor.\nTente novamente mais tarde.\n',
+    await setIntervalPromise(
+      1000,
+      3000,
+      colors.italic('\nBuscando alunos'),
+      colors.italic('.'),
     )
+    return students.data
+  } catch (error) {
+    await setIntervalPromise(
+      1000,
+      3000,
+      colors.italic('\nBuscando alunos'),
+      colors.italic('.'),
+    )
+    console.log(
+      colors.red('Requisição negada.\nFalha na conexão com o servidor.'),
+    )
+    console.log('Tente novamente mais tarde.')
+    const connection = 404
+    return connection
   }
 }
 
@@ -69,13 +90,26 @@ export async function queryParamsAprovedApi() {
     const students = await api.get('alunos', {
       params: { aprovados: true },
     })
-    await setIntervalPromise(1000, 3000, '\nBuscando alunos aprovados', '.')
-    console.log(students.data)
-  } catch (error) {
-    await setIntervalPromise(1000, 3000, '\nBuscando alunos aprovados', '.')
-    console.log(
-      '\nRequisição negada.\nFalha na conexão com o servidor.\nTente novamente mais tarde.\n',
+    await setIntervalPromise(
+      1000,
+      3000,
+      colors.italic('\nBuscando alunos aprovados'),
+      colors.italic('.'),
     )
+    return students.data
+  } catch (error) {
+    await setIntervalPromise(
+      1000,
+      3000,
+      colors.italic('\nBuscando alunos aprovados'),
+      colors.italic('.'),
+    )
+    console.log(
+      colors.red('Requisição negada.\nFalha na conexão com o servidor.'),
+    )
+    console.log('Tente novamente mais tarde.')
+    const connection = 404
+    return connection
   }
 }
 
@@ -84,13 +118,26 @@ export async function queryParamsReprovedApi() {
     const students = await api.get('alunos', {
       params: { reprovados: false },
     })
-    await setIntervalPromise(1000, 3000, 'Buscando alunos reprovados', '.')
-    console.log(students.data)
-  } catch (error) {
-    await setIntervalPromise(1000, 3000, 'Buscando alunos reprovados', '.')
-    console.log(
-      '\nRequisição negada.\nFalha na conexão com o servidor.\nTente novamente mais tarde.\n',
+    await setIntervalPromise(
+      1000,
+      3000,
+      colors.italic('\nBuscando alunos reprovados'),
+      colors.italic('.'),
     )
+    return students.data
+  } catch (error) {
+    await setIntervalPromise(
+      1000,
+      3000,
+      colors.italic('\nBuscando alunos reprovados'),
+      colors.italic('.'),
+    )
+    console.log(
+      colors.red('Requisição negada.\nFalha na conexão com o servidor.'),
+    )
+    console.log('Tente novamente mais tarde.')
+    const connection = 404
+    return connection
   }
 }
 
@@ -99,7 +146,12 @@ export async function simpleGetApi() {
     const students = await api.get('alunos')
     return students.data
   } catch (error) {
-    console.log('Falha na requisição')
+    console.log(
+      colors.red('Requisição negada.\nFalha na conexão com o servidor.'),
+    )
+    console.log('Tente novamente mais tarde.')
+    const connection = 404
+    return connection
   }
 }
 
@@ -109,15 +161,21 @@ export async function putApi(id: string, student: Student) {
     await setIntervalPromise(
       1000,
       3000,
-      '\nAtualizando',
-      '.',
-      'Dados atualizados com sucesso!',
+      colors.italic('\nAtualizando'),
+      colors.italic('.'),
+      colors.green('Dado atualizado com sucesso!'),
     )
   } catch (error) {
-    await setIntervalPromise(1000, 3000, 'Atualizando', '.')
-    console.log(
-      '\nRequisição negada.\nFalha na conexão com o servidor.\nTente novamente mais tarde.\n',
+    await setIntervalPromise(
+      1000,
+      3000,
+      colors.italic('\nAtualizando'),
+      colors.italic('.'),
     )
+    console.log(
+      colors.red('Requisição negada.\nFalha na conexão com o servidor.'),
+    )
+    console.log('Tente novamente mais tarde.')
   }
 }
 
@@ -127,14 +185,20 @@ export async function deleteApi(id: string) {
     await setIntervalPromise(
       1000,
       3000,
-      '\nApagando do registro',
-      '.',
-      'Aluno apagado com sucesso!',
+      colors.italic('\nApagando do registro'),
+      colors.italic('.'),
+      colors.green('Aluno apagado com sucesso!'),
     )
   } catch (error) {
-    await setIntervalPromise(1000, 3000, 'Apagando do registro', '.')
-    console.log(
-      '\nRequisição negada.\nFalha na conexão com o servidor.\nTente novamente mais tarde.\n',
+    await setIntervalPromise(
+      1000,
+      3000,
+      colors.italic('\nApagando do registro'),
+      colors.italic('.'),
     )
+    console.log(
+      colors.red('Requisição negada.\nFalha na conexão com o servidor.'),
+    )
+    console.log('Tente novamente mais tarde.')
   }
 }
