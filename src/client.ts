@@ -200,32 +200,42 @@ async function client() {
           if (students === 404) {
             break
           } else {
-            students.forEach((student: fullStudentData) => {
-              const average = `${student.average}`
+            if (students.length === 0) {
+              console.log(colors.yellow('Nenhum registro de alunos aprovados.'))
+            } else {
+              students.forEach((student: fullStudentData) => {
+                const average = `${student.average}`
 
-              console.log(
-                `${colors.bold('Aluno(a):')} ${colors.cyan(
-                  student.name,
-                )} | ${colors.bold('Média:')} ${colors.cyan(average)}\n`,
-              )
-              console.log('-'.repeat(60) + '\n')
-            })
+                console.log(
+                  `${colors.bold('Aluno(a):')} ${colors.cyan(
+                    student.name,
+                  )} | ${colors.bold('Média:')} ${colors.cyan(average)}\n`,
+                )
+                console.log('-'.repeat(60) + '\n')
+              })
+            }
           }
         } else if (statusMenu[index] === 'Reprovados') {
           const students = await queryParamsReprovedApi()
           if (students === 404) {
             break
           } else {
-            students.forEach((student: fullStudentData) => {
-              const average = `${student.average}`
-
+            if (students.length === 0) {
               console.log(
-                `${colors.bold('Aluno(a):')} ${colors.cyan(
-                  student.name,
-                )} | ${colors.bold('Média:')} ${colors.cyan(average)}\n`,
+                colors.yellow('Nenhum registro de alunos reprovados.'),
               )
-              console.log('-'.repeat(60) + '\n')
-            })
+            } else {
+              students.forEach((student: fullStudentData) => {
+                const average = `${student.average}`
+
+                console.log(
+                  `${colors.bold('Aluno(a):')} ${colors.cyan(
+                    student.name,
+                  )} | ${colors.bold('Média:')} ${colors.cyan(average)}\n`,
+                )
+                console.log('-'.repeat(60) + '\n')
+              })
+            }
           }
         }
       }
