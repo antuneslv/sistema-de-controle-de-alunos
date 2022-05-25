@@ -23,71 +23,79 @@ console.log(
 console.log(colors.bgBlue.black('=' + '-='.repeat(30) + '\n'))
 
 interface Student {
-  aluno: string
-  nota1: number | null
-  nota2: number | null
+  name: string
+  firstGrade: number | null
+  secondGrade: number | null
 }
 
 interface StudentWithId {
   id: string
-  aluno: string
-  nota1: number
-  nota2: number
+  name: string
+  firstGrade: number
+  secondGrade: number
 }
 
 interface fullStudentData {
   id: string
-  aluno: string
-  nota1: number
-  nota2: number
-  media: number
-  aprovado: boolean
+  name: string
+  firstGrade: number
+  secondGrade: number
+  average: number
+  isApproved: boolean
 }
 
 let student: Student = {
-  aluno: '',
-  nota1: null,
-  nota2: null,
+  name: '',
+  firstGrade: null,
+  secondGrade: null,
 }
 
 function validateInputName() {
   const regexName = /^[A-Za-z ãáâéêèëíõóôúüçñø-]+$/
   do {
-    if (student.aluno === '') {
+    if (student.name === '') {
       const name = readline.question('\nNome do aluno: ')
-      student.aluno = name
+      student.name = name
     } else {
       console.log('Entre com um nome válido.')
       const name = readline.question('\nNome do aluno: ')
-      student.aluno = name
+      student.name = name
     }
-  } while (!regexName.test(student.aluno))
+  } while (!regexName.test(student.name))
 }
 
 function validateInputFirstGrade() {
   do {
-    if (student.nota1 === null) {
+    if (student.firstGrade === null) {
       const firstGrade = readline.question('\nPrimeira Nota: ')
-      student.nota1 = Number(firstGrade)
+      student.firstGrade = Number(firstGrade)
     } else {
       console.log('Valor inválido. Insira uma nota entre 0 e 10.')
       const firstGrade = readline.question('\nPrimeira Nota: ')
-      student.nota1 = Number(firstGrade)
+      student.firstGrade = Number(firstGrade)
     }
-  } while (student.nota1 < 0 || student.nota1 > 10 || isNaN(student.nota1))
+  } while (
+    student.firstGrade < 0 ||
+    student.firstGrade > 10 ||
+    isNaN(student.firstGrade)
+  )
 }
 
 function validateInputSecondGrade() {
   do {
-    if (student.nota2 === null) {
+    if (student.secondGrade === null) {
       const secondGrade = readline.question('\nSegunda Nota: ')
-      student.nota2 = Number(secondGrade)
+      student.secondGrade = Number(secondGrade)
     } else {
       console.log('Valor inválido. Insira uma nota entre 0 e 10.')
       const secondGrade = readline.question('\nSegunda Nota: ')
-      student.nota2 = Number(secondGrade)
+      student.secondGrade = Number(secondGrade)
     }
-  } while (student.nota2 < 0 || student.nota2 > 10 || isNaN(student.nota2))
+  } while (
+    student.secondGrade < 0 ||
+    student.secondGrade > 10 ||
+    isNaN(student.secondGrade)
+  )
 }
 
 const mainMenu = [
@@ -139,9 +147,9 @@ async function client() {
       await postApi(student)
 
       student = {
-        aluno: '',
-        nota1: null,
-        nota2: null,
+        name: '',
+        firstGrade: null,
+        secondGrade: null,
       }
     } else if (mainMenu[index] === 'Consultar alunos') {
       const students = await getApi()
@@ -149,11 +157,11 @@ async function client() {
         continue
       } else {
         students.forEach((student: fullStudentData) => {
-          const firstGrade = `${student.nota1}`
-          const secondGrade = `${student.nota2}`
-          const avarage = `${student.media}`
+          const firstGrade = `${student.firstGrade}`
+          const secondGrade = `${student.secondGrade}`
+          const average = `${student.average}`
           let status
-          student.aprovado === true
+          student.isApproved === true
             ? (status = colors.green('Aprovado'))
             : (status = colors.red('Reprovado'))
 
@@ -161,14 +169,14 @@ async function client() {
             `${colors.bold('Id do aluno:')} ${colors.cyan(student.id)}`,
           )
           console.log(
-            `${colors.bold('Aluno(a):')} ${colors.cyan(student.aluno)}`,
+            `${colors.bold('Aluno(a):')} ${colors.cyan(student.name)}`,
           )
           console.log(
             `${colors.bold('Primeira Nota:')} ${colors.cyan(
               firstGrade,
             )} | ${colors.bold('Segunda Nota:')} ${colors.cyan(
               secondGrade,
-            )} | ${colors.bold('Média:')} ${colors.cyan(avarage)}`,
+            )} | ${colors.bold('Média:')} ${colors.cyan(average)}`,
           )
           console.log(`${colors.bold('Situação:')} ${status}\n`)
           console.log('-'.repeat(60) + '\n')
@@ -189,12 +197,12 @@ async function client() {
             break
           } else {
             students.forEach((student: fullStudentData) => {
-              const avarage = `${student.media}`
+              const average = `${student.average}`
 
               console.log(
                 `${colors.bold('Aluno(a):')} ${colors.cyan(
-                  student.aluno,
-                )} | ${colors.bold('Média:')} ${colors.cyan(avarage)}\n`,
+                  student.name,
+                )} | ${colors.bold('Média:')} ${colors.cyan(average)}\n`,
               )
               console.log('-'.repeat(60) + '\n')
             })
@@ -205,12 +213,12 @@ async function client() {
             break
           } else {
             students.forEach((student: fullStudentData) => {
-              const avarage = `${student.media}`
+              const average = `${student.average}`
 
               console.log(
                 `${colors.bold('Aluno(a):')} ${colors.cyan(
-                  student.aluno,
-                )} | ${colors.bold('Média:')} ${colors.cyan(avarage)}\n`,
+                  student.name,
+                )} | ${colors.bold('Média:')} ${colors.cyan(average)}\n`,
               )
               console.log('-'.repeat(60) + '\n')
             })
@@ -245,40 +253,40 @@ async function client() {
         if (updateMenu[index] === undefined) {
           break
         } else if (updateMenu[index] === 'Nome') {
-          student.nota1 = selectedStudent.nota1
-          student.nota2 = selectedStudent.nota2
+          student.firstGrade = selectedStudent.firstGrade
+          student.secondGrade = selectedStudent.secondGrade
           validateInputName()
 
           await putApi(idStudent, student)
 
           student = {
-            aluno: '',
-            nota1: null,
-            nota2: null,
+            name: '',
+            firstGrade: null,
+            secondGrade: null,
           }
         } else if (updateMenu[index] === 'Primeira Nota') {
-          student.aluno = selectedStudent.aluno
-          student.nota2 = selectedStudent.nota2
+          student.name = selectedStudent.name
+          student.secondGrade = selectedStudent.secondGrade
           validateInputFirstGrade()
 
           await putApi(idStudent, student)
 
           student = {
-            aluno: '',
-            nota1: null,
-            nota2: null,
+            name: '',
+            firstGrade: null,
+            secondGrade: null,
           }
         } else if (updateMenu[index] === 'Segunda Nota') {
-          student.aluno = selectedStudent.aluno
-          student.nota1 = selectedStudent.nota1
+          student.name = selectedStudent.name
+          student.firstGrade = selectedStudent.firstGrade
           validateInputSecondGrade()
 
           await putApi(idStudent, student)
 
           student = {
-            aluno: '',
-            nota1: null,
-            nota2: null,
+            name: '',
+            firstGrade: null,
+            secondGrade: null,
           }
         }
       }
@@ -305,15 +313,15 @@ async function client() {
           )
           console.log(
             `Você tem certeza que deseja excluir o aluno(a) ${colors.blue.bold(
-              selectedStudent.aluno,
+              selectedStudent.name,
             )}?`,
           )
-          const deletStudent = readline
+          const deleteStudent = readline
             .question(
               `Digite ${colors.red.bold('Sim')} para validar sua escolha: `,
             )
             .toUpperCase()
-          if (deletStudent === 'Sim'.toUpperCase()) {
+          if (deleteStudent === 'Sim'.toUpperCase()) {
             await deleteApi(idStudent)
           } else {
             continue

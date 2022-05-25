@@ -7,9 +7,9 @@ const api = axios.create({
 })
 
 interface Student {
-  aluno: string
-  nota1: number | null
-  nota2: number | null
+  name: string
+  firstGrade: number | null
+  secondGrade: number | null
 }
 
 export async function testConnection() {
@@ -47,7 +47,7 @@ export async function postApi(student: Student) {
       colors.italic('\nCadastrando'),
       '.',
       colors.green(
-        `Aluno(a) ${colors.white(student.aluno)} cadastrado(a) com sucesso!`,
+        `Aluno(a) ${colors.white(student.name)} cadastrado(a) com sucesso!`,
       ),
     )
   } catch (error) {

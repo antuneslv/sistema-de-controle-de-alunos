@@ -27,11 +27,11 @@ app.use(express.json())
 
 interface Students {
   id: string
-  aluno: string
-  nota1: number
-  nota2: number
-  media: number
-  aprovado: boolean
+  name: string
+  firstGrade: number
+  secondGrade: number
+  average: number
+  isApproved: boolean
 }
 
 let students: Students[]
@@ -63,9 +63,9 @@ app.get('/alunos', (request, response) => {
   let results
 
   if (aprovados) {
-    results = students.filter(student => student.aprovado === true)
+    results = students.filter(student => student.isApproved === true)
   } else if (reprovados) {
-    results = students.filter(student => student.aprovado === false)
+    results = students.filter(student => student.isApproved === false)
   } else {
     results = students
   }
@@ -79,15 +79,24 @@ app.post('/alunos', (request, response) => {
     students = JSON.parse(chunk.toString())
   })
 
-  const { aluno, nota1, nota2 } = request.body
+  const { name, firstGrade, secondGrade } = request.body
 
-  const avarageGrade = ((Number(nota1) + Number(nota2)) / 2).toFixed(1)
-  const media = Number(avarageGrade)
-  let aprovado: boolean
+  const averageGrade = ((Number(firstGrade) + Number(secondGrade)) / 2).toFixed(
+    1,
+  )
+  const average = Number(averageGrade)
+  let isApproved: boolean
 
-  media >= 5 ? (aprovado = true) : (aprovado = false)
+  average >= 5 ? (isApproved = true) : (isApproved = false)
 
-  const student = { id: uuidv4(), aluno, nota1, nota2, media, aprovado }
+  const student = {
+    id: uuidv4(),
+    name,
+    firstGrade,
+    secondGrade,
+    average,
+    isApproved,
+  }
 
   students.push(student)
 
@@ -104,13 +113,15 @@ app.put('/alunos/:id', (request, response) => {
   })
 
   const { id } = request.params
-  const { aluno, nota1, nota2 } = request.body
+  const { name, firstGrade, secondGrade } = request.body
 
-  const avarageGrade = ((Number(nota1) + Number(nota2)) / 2).toFixed(1)
-  const media = Number(avarageGrade)
-  let aprovado: boolean
+  const averageGrade = ((Number(firstGrade) + Number(secondGrade)) / 2).toFixed(
+    1,
+  )
+  const average = Number(averageGrade)
+  let isApproved: boolean
 
-  media >= 5 ? (aprovado = true) : (aprovado = false)
+  average >= 5 ? (isApproved = true) : (isApproved = false)
 
   const studentIndex = students.findIndex(student => student.id === id)
 
@@ -120,11 +131,11 @@ app.put('/alunos/:id', (request, response) => {
 
   const student = {
     id,
-    aluno,
-    nota1,
-    nota2,
-    media,
-    aprovado,
+    name,
+    firstGrade,
+    secondGrade,
+    average,
+    isApproved,
   }
 
   students[studentIndex] = student
@@ -158,5 +169,5 @@ app.delete('/alunos/:id', (request, response) => {
 })
 
 app.listen(3333, () => {
-  console.log('Server started on port 3333!')
+  console.log('\nServer started on port 3333!')
 })
