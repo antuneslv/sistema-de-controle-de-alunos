@@ -21,7 +21,7 @@ A aplicação foi feita em **NodeJs** e programada em **TypeScript** e utiliza a
 
 # Quick Start
 
-## Instalando as dependencias
+## Instalando as dependências
 
 ```
 npm i
