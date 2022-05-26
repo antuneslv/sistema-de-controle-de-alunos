@@ -5,7 +5,7 @@ Desafio final do módulo **Técnicas de Programação I | Node.js** do curso de 
 Neste programa você consegue:
 - Cadastrar um aluno com duas notas, o sistema salva os dados e calcula a média do aluno e também se ele foi aprovado (média maior que 5) ou não.
 - Consultar todos os alunos registrados.
-- Consultar os só alunos aprovados ou reprovados.
+- Consultar só os alunos aprovados ou reprovados.
 - Alterar algum dado de um aluno.
 - Apagar um aluno do registro.
 
